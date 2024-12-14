@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+    .form-container {
+        max-width: 400px;
+        margin: auto;
+        margin-top: 5%;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .title {
+        margin-bottom: 20px;
+        text-align: center;
+        color: #2c3e50 !important;
+    }
+    button {
+        cursor: pointer;
+        background: #2c3e50 !important;
+        border: none !important;
+    }
+    button:hover {
+        background: #34495e !important;
+    }
+
+    .link a {
+        color: #2c3e50;
+    }
+    .image-card {
+            position: relative;
+        }
+        .delete-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            border-radius: 50%;
+            padding: 5px;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+
+</style>
+<body>
+    <div class="form-container">
+        <h2 class="title">Upload File</h2>
+        <form action="{% url 'upload' %}" method="POST" id="uploadForm" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input id="fileInput" type="file" name="file" style="display: none;" required>
+            <button id="selectFileButton" type="button" class="btn btn-primary btn-block">
+                Upload
+            </button>
+        </form>
+    </div>
+    {% if images %}
+    <div class="container mt-5">
+        <hr/>
+        <h3>All Images</h3>
+        <div class="row row-cols-1 row-cols-md-4 g-4">
+                {% for image in images %}
+                <div class="col">
+                    <div class="card h-100 image-card">
+                        <img src="{{ image.url }}" class="card-img-top" alt="Image">
+                        <form action="{% url 'delete_image' %}" method="POST" class="delete-icon">
+                            {% csrf_token %}
+                            <input type="hidden" name="image_key" value="{{ image.url }}">
+                            <input type="submit" style="color: tomato;"
+                            value="Delete" class="btn btn-link p-0 border-0" />
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</body>
+
+<script>
+    document.getElementById('selectFileButton').addEventListener('click', function () {
+        document.getElementById('fileInput').click();
+    });
+
+    document.getElementById('fileInput').addEventListener('change', function () {
+        if (this.files.length > 0) {
+            document.getElementById('uploadForm').submit();
+        }
+    });
+</script>
+{% endblock %}
